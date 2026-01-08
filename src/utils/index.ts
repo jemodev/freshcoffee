@@ -4,3 +4,8 @@ export const formatCurrency = (amount: number) => {
         currency: "USD",
     }).format(amount);
 };
+
+export const toLowerFirstChar = (str: string) => {
+    if (!str) return str;
+    return str.charAt(0).toLowerCase();
+};
