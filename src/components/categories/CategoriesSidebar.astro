@@ -3,7 +3,7 @@ import Logo from "@/assets/logo.svg";
 import { CategoriesSchema } from "@/types";
 import CategoryItem from "@/components/categories/CategoryItem.astro";
 
-const url = `http://localhost:10008/wp-json/wp/v2/freshcoffee_categories`;
+const url = `${import.meta.env.API_URL}/freshcoffee_categories`;
 const response = await fetch(url);
 const data = await response.json();
 const categories = CategoriesSchema.parse(data);
