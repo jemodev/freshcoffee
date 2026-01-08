@@ -11,7 +11,8 @@ const { category } = Astro.props;
 const currentCategory = () => category.slug === Astro.params.category;
 ---
 
-<div
+<a
+    href={`/order/${category.slug}`}
     class={`${currentCategory() && "bg-amber-400"} flex items-center gap-4 p-3 border-t border-gray-200 last-of-type:border-b hover:bg-amber-400 transition-colors duration-300 cursor-pointer`}
 >
     <Picture
@@ -21,7 +22,5 @@ const currentCategory = () => category.slug === Astro.params.category;
         height={300}
         class={"w-20 h-20"}
     />
-    <a href={`/order/${category.slug}`} class="text-xl font-bold inline-block"
-        >{category.name}</a
-    >
-</div>
+    <span class="text-xl font-bold inline-block">{category.name}</span>
+</a>
