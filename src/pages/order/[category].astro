@@ -1,8 +1,8 @@
 ---
 import OrderLayout from "@/layouts/OrderLayout.astro";
+import Products from "@/components/products/Products.astro";
 ---
 
 <OrderLayout title={`Order - ${Astro.params.category}`}>
-    <h1>Order Category: {Astro.params.category}</h1>
-    <p>Here you can place your order for {Astro.params.category} items.</p>
+    <Products />
 </OrderLayout>
