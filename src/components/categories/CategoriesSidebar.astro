@@ -1,0 +1,16 @@
+---
+import Logo from "@/assets/logo.svg";
+import { CategoriesSchema } from "@/types";
+import CategoryItem from "@/components/categories/CategoryItem.astro";
+
+const url = `http://localhost:10008/wp-json/wp/v2/freshcoffee_categories`;
+const response = await fetch(url);
+const data = await response.json();
+const categories = CategoriesSchema.parse(data);
+---
+
+<aside class="md:w-80 md:h-screen border-r border-gray-200">
+    <div class="flex justify-center-safe p-5"><Logo /></div>
+
+    {categories.map((category) => <CategoryItem category={category} />)}
+</aside>
