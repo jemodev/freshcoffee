@@ -61,3 +61,11 @@ const ProductSchema = z.object({
 
 export const ProductsSchema = z.array(ProductSchema);
 export type Product = z.infer<typeof ProductSchema>;
+
+const ProductWithVariablePriceSchema = ProductSchema.extend({
+    acf: VariablePriceSchema,
+});
+
+export type ProductWithVariablePrice = z.infer<
+    typeof ProductWithVariablePriceSchema
+>;
