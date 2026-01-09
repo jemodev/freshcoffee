@@ -10,6 +10,7 @@ type Store = {
     removeItem: (product: OrderItem) => void;
     increaseItemQuantity: (product: OrderItem) => void;
     decreaseItemQuantity: (product: OrderItem) => void;
+    updateItemSize: (product: OrderItem, size: OrderItem["size"]) => void;
 };
 
 const findExistingOrder = (product: SelectedProduct, orders: OrderItem[]) => {
@@ -116,5 +117,24 @@ export const useOrderStore = create<Store>((set, get) => ({
             set({ orders: updatedOrders });
             return;
         }
+    },
+    updateItemSize: (product, newSize) => {
+        if (!product.key || !newSize || product.size === newSize) return;
+
+        const currentOrders = get().orders;
+        const newKey = `${product.id}-${toLowerFirstChar(newSize)}`;
+        const isMatch = (order: OrderItem, key: string) => order.key === key;
+        const existingOrderIndex = currentOrders.findIndex((order) =>
+            isMatch(order, product.key!)
+        );
+
+        let updatedOrders = [...currentOrders];
+        updatedOrders[existingOrderIndex] = {
+            ...product,
+            size: newSize,
+            key: newKey,
+        };
+
+        set({ orders: updatedOrders });
     },
 }));

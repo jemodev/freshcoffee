@@ -1,3 +1,4 @@
+import { useOrderStore } from "@/store/order";
 import type { OrderItem } from "@/types";
 import { Radio, RadioGroup } from "@headlessui/react";
 
@@ -8,12 +9,19 @@ type Props = {
 };
 
 export default function SizeSelector({ item }: Props) {
+    const { updateItemSize } = useOrderStore();
     const selectedSize = sizes.find((size) => size.name === item.size);
+
+    const handleChange = (value: { name: string }) => {
+        updateItemSize(item, value.name);
+    };
+
     return (
         <div>
             <RadioGroup
                 className="grid gap-4 lg:grid-cols-3"
                 value={selectedSize}
+                onChange={handleChange}
             >
                 {sizes.map((size) => (
                     <Radio
