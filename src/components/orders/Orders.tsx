@@ -3,7 +3,7 @@ import ProductDetails from "./ProductDetails";
 
 export default function Orders() {
     const { orders } = useOrderStore();
-    console.log(orders);
+
     return (
         <>
             {orders.length === 0 ? (

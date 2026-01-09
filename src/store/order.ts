@@ -1,5 +1,10 @@
-import type { OrderItem, SelectedProduct } from "@/types";
+import type {
+    OrderItem,
+    ProductWithVariablePrice,
+    SelectedProduct,
+} from "@/types";
 import { toLowerFirstChar } from "@/utils";
+import { string } from "astro:schema";
 import { create } from "zustand";
 
 type Store = {
@@ -59,8 +64,6 @@ export const useOrderStore = create<Store>((set, get) => ({
         };
 
         set({ orders: [...currentOrders, newOrder] });
-
-        console.log(get().orders);
     },
     removeItem: (product) => {
         const currentOrders = get().orders;
@@ -118,8 +121,23 @@ export const useOrderStore = create<Store>((set, get) => ({
             return;
         }
     },
-    updateItemSize: (product, newSize) => {
+    updateItemSize: async (product, newSize) => {
         if (!product.key || !newSize || product.size === newSize) return;
+
+        const res = await fetch(`/api/products/${product.id}`);
+        const data = (await res.json()) as ProductWithVariablePrice;
+
+        const updatedData = Object.values(data.acf)
+            .filter(
+                (value): value is { size: string; price: number } =>
+                    typeof value === "object" &&
+                    value !== null &&
+                    "size" in value &&
+                    "price" in value
+            )
+            .find((item) => item.size === newSize);
+
+        if (!updatedData) return;
 
         const currentOrders = get().orders;
         const newKey = `${product.id}-${toLowerFirstChar(newSize)}`;
@@ -127,12 +145,35 @@ export const useOrderStore = create<Store>((set, get) => ({
         const existingOrderIndex = currentOrders.findIndex((order) =>
             isMatch(order, product.key!)
         );
+        const existingNewOrderIndex = currentOrders.findIndex((order) =>
+            isMatch(order, newKey)
+        );
+
+        // If an order with the new size already exists, we can merge them
+        if (existingNewOrderIndex !== -1) {
+            let updatedOrders = [...currentOrders];
+
+            // Update quantity and subtotal of the existing order with the new size
+            updatedOrders[existingNewOrderIndex].quantity +=
+                updatedOrders[existingOrderIndex].quantity;
+            updatedOrders[existingNewOrderIndex].subtotal =
+                updatedOrders[existingNewOrderIndex].quantity *
+                updatedOrders[existingNewOrderIndex].price;
+
+            // Remove the old order
+            updatedOrders.splice(existingOrderIndex, 1);
+
+            set({ orders: updatedOrders });
+            return;
+        }
 
         let updatedOrders = [...currentOrders];
         updatedOrders[existingOrderIndex] = {
             ...product,
             size: newSize,
             key: newKey,
+            price: updatedData.price,
+            subtotal: updatedData.price * product.quantity,
         };
 
         set({ orders: updatedOrders });
