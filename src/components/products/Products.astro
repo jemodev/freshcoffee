@@ -11,7 +11,7 @@ const products = ProductsSchema.parse(data);
 
 <div></div>
 <div
-    class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5 items-stretch"
+    class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5 items-stretch"
 >
     {products.map((product) => <ProductItem product={product} />)}
 </div>
