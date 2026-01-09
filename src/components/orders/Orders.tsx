@@ -17,7 +17,10 @@ export default function Orders() {
                     </h2>
 
                     {orders.map((order) => {
-                        return <ProductDetails key={order.id} order={order} />;
+                        const key = order.size
+                            ? `${order.id}-${order.size}`
+                            : order.id;
+                        return <ProductDetails key={key} order={order} />;
                     })}
                 </>
             )}
