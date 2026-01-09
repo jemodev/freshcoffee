@@ -7,6 +7,22 @@ type Store = {
     orders: OrderItem[];
     toggleOrderDrawer: () => void;
     addItem: (product: SelectedProduct) => void;
+    removeItem: (product: OrderItem) => void;
+    increaseItemQuantity: (product: OrderItem) => void;
+    decreaseItemQuantity: (product: OrderItem) => void;
+};
+
+const findExistingOrder = (product: SelectedProduct, orders: OrderItem[]) => {
+    const hasSize = Boolean(product.size);
+    const key = hasSize
+        ? `${product.id}-${toLowerFirstChar(product.size!)}`
+        : undefined;
+
+    const index = orders.findIndex((order) =>
+        hasSize ? order.key === key : order.id === product.id
+    );
+
+    return { index, key };
 };
 
 export const useOrderStore = create<Store>((set, get) => ({
@@ -19,13 +35,9 @@ export const useOrderStore = create<Store>((set, get) => ({
         const currentOrders = get().orders;
 
         // Check if the product with the same id and size already exists
-        const hasSize = Boolean(product.size);
-        const key = hasSize
-            ? `${product.id}-${toLowerFirstChar(product.size!)}`
-            : undefined;
-
-        const existingOrderIndex = currentOrders.findIndex((order) =>
-            hasSize ? order.key === key : order.id === product.id
+        const { index: existingOrderIndex, key } = findExistingOrder(
+            product,
+            currentOrders
         );
 
         if (existingOrderIndex !== -1) {
@@ -48,5 +60,61 @@ export const useOrderStore = create<Store>((set, get) => ({
         set({ orders: [...currentOrders, newOrder] });
 
         console.log(get().orders);
+    },
+    removeItem: (product) => {
+        const currentOrders = get().orders;
+
+        const { index: existingOrderIndex } = findExistingOrder(
+            product,
+            currentOrders
+        );
+
+        if (existingOrderIndex !== -1) {
+            const updatedOrders = [...currentOrders];
+            updatedOrders.splice(existingOrderIndex, 1);
+            set({ orders: updatedOrders });
+            return;
+        }
+    },
+    increaseItemQuantity: (product) => {
+        const currentOrders = get().orders;
+
+        const { index: existingOrderIndex } = findExistingOrder(
+            product,
+            currentOrders
+        );
+
+        if (existingOrderIndex !== -1) {
+            const updatedOrders = [...currentOrders];
+            updatedOrders[existingOrderIndex].quantity += 1;
+            updatedOrders[existingOrderIndex].subtotal =
+                updatedOrders[existingOrderIndex].quantity *
+                updatedOrders[existingOrderIndex].price;
+            set({ orders: updatedOrders });
+            return;
+        }
+    },
+    decreaseItemQuantity: (product) => {
+        const currentOrders = get().orders;
+
+        const { index: existingOrderIndex } = findExistingOrder(
+            product,
+            currentOrders
+        );
+
+        if (existingOrderIndex !== -1) {
+            const updatedOrders = [...currentOrders];
+            updatedOrders[existingOrderIndex].quantity -= 1;
+            updatedOrders[existingOrderIndex].subtotal =
+                updatedOrders[existingOrderIndex].quantity *
+                updatedOrders[existingOrderIndex].price;
+
+            if (updatedOrders[existingOrderIndex].quantity === 0) {
+                updatedOrders.splice(existingOrderIndex, 1);
+            }
+
+            set({ orders: updatedOrders });
+            return;
+        }
     },
 }));
