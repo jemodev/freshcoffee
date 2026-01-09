@@ -1,4 +1,6 @@
 ---
+import ToastNotification from "@/components/ui/ToastNotification";
+import "react-toastify/dist/ReactToastify.css";
 import "@/styles/global.css";
 interface Props {
     title: string;
@@ -17,5 +19,7 @@ const { title } = Astro.props as Props;
     </head>
     <body class="h-full">
         <slot />
+
+        <ToastNotification client:only="react" />
     </body>
 </html>

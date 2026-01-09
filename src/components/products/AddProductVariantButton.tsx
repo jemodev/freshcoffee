@@ -1,5 +1,6 @@
 import { useOrderStore } from "@/store/order";
 import type { SelectedProduct } from "@/types";
+import { toast } from "react-toastify";
 
 type Props = {
     product: SelectedProduct;
@@ -12,6 +13,7 @@ export default function AddProductVariantButton({ product }: Props) {
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ): void => {
         addItem(product);
+        toast.success("Producto agregado al pedido");
     };
 
     return (
