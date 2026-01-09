@@ -1,6 +1,7 @@
 ---
 import type { ProductWithVariablePrice } from "@/types";
 import { formatCurrency, toLowerFirstChar } from "@/utils";
+import AddProductVariantButton from "./AddProductVariantButton";
 
 interface Props {
     product: ProductWithVariablePrice;
@@ -19,8 +20,20 @@ const keys = ["small", "medium", "large"] as const;
                     <dt class="text-xl font-black capitalize">
                         {toLowerFirstChar(variant.size)}:
                     </dt>
-                    <dd class="text-3xl text-amber-400">
-                        {formatCurrency(variant.price)}
+                    <dd class="flex items-center gap-3">
+                        <span class="text-3xl text-amber-400">
+                            {formatCurrency(variant.price)}
+                        </span>
+
+                        <AddProductVariantButton
+                            client:only="react"
+                            product={{
+                                id: product.id,
+                                name: product.title.rendered,
+                                price: variant.price,
+                                size: variant.size,
+                            }}
+                        />
                     </dd>
                 </dl>
             );
