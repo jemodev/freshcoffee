@@ -6,6 +6,7 @@ import {
 } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useOrderStore } from "@/store/order";
+import Orders from "@/components/orders/Orders";
 
 export default function OrderDrawer() {
     const { isOrderDrawerOpen, toggleOrderDrawer } = useOrderStore();
@@ -54,7 +55,7 @@ export default function OrderDrawer() {
                                         </div>
                                     </div>
                                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                                        {/* OrderContents aquí */}
+                                        <Orders />
                                     </div>
                                 </div>
                             </DialogPanel>
