@@ -1,7 +1,9 @@
 ---
+import { ClientRouter } from "astro:transitions";
 import CategoriesSidebar from "@/components/categories/CategoriesSidebar.astro";
 import OrderDrawer from "@/components/orders/OrderDrawer";
 import "@/styles/global.css";
+import Layout from "./Layout.astro";
 interface Props {
     title: string;
 }
@@ -18,13 +20,16 @@ const { title } = Astro.props as Props;
         <title>FreshCoffee - {title}</title>
     </head>
     <body>
-        <div class="md:flex">
-            <CategoriesSidebar />
-            <main class="md:flex-1 md:h-screen md:overflow-y-scroll p-5">
-                <slot />
-            </main>
+        <ClientRouter />
+        <Layout title="Coffee App">
+            <div class="md:flex">
+                <CategoriesSidebar />
+                <main class="md:flex-1 md:h-screen md:overflow-y-scroll p-5">
+                    <slot />
+                </main>
 
-            <OrderDrawer client:only="react" />
-        </div>
+                <OrderDrawer client:only="react" />
+            </div>
+        </Layout>
     </body>
 </html>
