@@ -11,7 +11,7 @@ export default function AddProductButton({ product }: Props) {
     const handleClick = (
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ): void => {
-        addItem();
+        addItem(product);
     };
 
     return (
